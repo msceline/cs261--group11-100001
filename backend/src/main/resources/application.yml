@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: project
+  datasource:
+    # Overridden in Docker by SPRING_DATASOURCE_* env vars (see docker-compose.yml)
+    url: jdbc:sqlserver://localhost:${DB_PORT:1433};databaseName=${DB_NAME:master};encrypt=true;trustServerCertificate=true
+    username: sa
+    password: ${MSSQL_SA_PASSWORD:}
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+server:
+  port: 8080
