@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.team.project.dto.user.UpdateProfileRequest;
 import com.team.project.entity.User;
 import com.team.project.repository.UserRepository;
 
@@ -22,5 +23,14 @@ public class UserService {
 
     public Optional<User> findById(int userId) {
         return userRepository.findById(userId);
+    }
+
+    /** Updates only the fields that are non-null in the request. */
+    public Optional<User> updateProfile(int userId, UpdateProfileRequest req) {
+        return userRepository.findById(userId).map(user -> {
+            if (req.displayName() != null) user.setDisplayName(req.displayName().trim());
+            if (req.email() != null) user.setEmail(req.email().trim());
+            return userRepository.save(user);
+        });
     }
 }
