@@ -1,7 +1,5 @@
-
 package com.team.project.repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,36 +10,46 @@ import com.team.project.entity.Task;
 @Repository
 public class TaskRepository {
 
-    private final List<Task> tasks = new ArrayList<>();
-    private int nextId = 1;
+    private final TaskJpaRepository jpaRepository;
 
-    // Add a new task
+    public TaskRepository(TaskJpaRepository jpaRepository) {
+        this.jpaRepository = jpaRepository;
+    }
 
     public Task save(Task task) {
         Task newTask = new Task(
-            nextId++,
-            task.getProjectId(),
-            task.getTaskTitle(),
-            task.getTaskDescription(),
-            task.getAssigneeId(),
-            task.getStatus(),
-            task.getDueDate()
-    );
+                null,
+                task.getProjectId(),
+                task.getTaskTitle(),
+                task.getTaskDescription(),
+                task.getAssigneeId(),
+                task.getStatus(),
+                task.getDueDate()
+        );
 
-    tasks.add(newTask);
-    return newTask;
-}
-
-
-    // Find a task by ID
-    public Optional<Task> findById(int taskId) {
-        return tasks.stream()
-                .filter(task -> task.getTaskId() == taskId)
-                .findFirst();
+        return jpaRepository.save(newTask);
     }
 
-    // Get all tasks
+    public Optional<Task> findById(int taskId) {
+        return jpaRepository.findById(taskId);
+    }
+
     public List<Task> findAll() {
-        return new ArrayList<>(tasks);
+        return jpaRepository.findAll();
+    }
+
+    public Optional<Task> update(int taskId, Task task) {
+        return jpaRepository.findById(taskId)
+                .map(existingTask -> {
+                    existingTask.setProjectId(task.getProjectId());
+                    existingTask.setTaskTitle(task.getTaskTitle());
+                    existingTask.setTaskDescription(
+                            task.getTaskDescription());
+                    existingTask.setAssigneeId(task.getAssigneeId());
+                    existingTask.setStatus(task.getStatus());
+                    existingTask.setDueDate(task.getDueDate());
+
+                    return jpaRepository.save(existingTask);
+                });
     }
 }
