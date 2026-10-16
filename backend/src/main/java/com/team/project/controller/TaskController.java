@@ -38,20 +38,18 @@ public class TaskController {
     }
 
     // Create a new task
-    
     @PostMapping
     public ResponseEntity<Task> createTask(
         @RequestBody CreateTaskRequest request) {
 
     Task task = new Task(
-        0,
-        request.getProjectId(),
-        request.getTaskTitle(),
-        request.getTaskDescription(),
-        request.getAssigneeId(),
-        request.getStatus(),
-        request.getDueDate(),
-        request.getStartDate()
+            0,
+            request.getProjectId(),
+            request.getTaskTitle(),
+            request.getTaskDescription(),
+            request.getAssigneeId(),
+            request.getStatus(),
+            request.getDueDate()
     );
 
     Task createdTask = taskService.createTask(task);
@@ -60,5 +58,4 @@ public class TaskController {
             .status(HttpStatus.CREATED)
             .body(createdTask);
     }
-
 }

@@ -12,7 +12,6 @@ public class Task {
     private final int assigneeId;
     private final String status;
     private final LocalDateTime dueDate;
-    private final LocalDateTime startDate;
 
     public Task(
             int taskId,
@@ -21,8 +20,7 @@ public class Task {
             String taskDescription,
             int assigneeId,
             String status,
-            LocalDateTime dueDate,
-            LocalDateTime startDate) {
+            LocalDateTime dueDate) {
 
         this.taskId = taskId;
         this.projectId = projectId;
@@ -31,7 +29,6 @@ public class Task {
         this.assigneeId = assigneeId;
         this.status = status;
         this.dueDate = dueDate;
-        this.startDate = startDate;
     }
 
     public int getTaskId() {
@@ -60,9 +57,5 @@ public class Task {
 
     public LocalDateTime getDueDate() {
         return dueDate;
-    }
-
-    public LocalDateTime getStartDate() {
-        return startDate;
     }
 }

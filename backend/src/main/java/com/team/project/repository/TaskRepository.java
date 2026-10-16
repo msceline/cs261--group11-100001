@@ -16,21 +16,22 @@ public class TaskRepository {
     private int nextId = 1;
 
     // Add a new task
+
     public Task save(Task task) {
         Task newTask = new Task(
-                nextId++,
-                task.getProjectId(),
-                task.getTaskTitle(),
-                task.getTaskDescription(),
-                task.getAssigneeId(),
-                task.getStatus(),
-                task.getDueDate(),
-                task.getStartDate()
-        );
+            nextId++,
+            task.getProjectId(),
+            task.getTaskTitle(),
+            task.getTaskDescription(),
+            task.getAssigneeId(),
+            task.getStatus(),
+            task.getDueDate()
+    );
 
-        tasks.add(newTask);
-        return newTask;
-    }
+    tasks.add(newTask);
+    return newTask;
+}
+
 
     // Find a task by ID
     public Optional<Task> findById(int taskId) {

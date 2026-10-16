@@ -10,7 +10,6 @@ public class CreateTaskRequest {
     private String taskDescription;
     private int assigneeId;
     private String status;
-    private LocalDateTime startDate;
     private LocalDateTime dueDate;
 
     // Constructor เปล่า ให้ Jackson สร้าง object ได้
@@ -38,10 +37,6 @@ public class CreateTaskRequest {
         return status;
     }
 
-    public LocalDateTime getStartDate() {
-        return startDate;
-    }
-
     public LocalDateTime getDueDate() {
         return dueDate;
     }
@@ -65,10 +60,6 @@ public class CreateTaskRequest {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public void setStartDate(LocalDateTime startDate) {
-        this.startDate = startDate;
     }
 
     public void setDueDate(LocalDateTime dueDate) {
