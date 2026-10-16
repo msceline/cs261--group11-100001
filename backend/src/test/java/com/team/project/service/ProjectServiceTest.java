@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.team.project.dto.project.AddMemberRequest;
 import com.team.project.dto.project.CreateProjectRequest;
 import com.team.project.dto.project.ProjectResponse;
 import com.team.project.repository.ProjectRepository;
@@ -26,7 +27,7 @@ class ProjectServiceTest {
 
     @BeforeEach
     void setUp() {
-        projectService = new ProjectService(new ProjectRepository());
+        projectService = new ProjectService(new ProjectRepository(), new UserService(new com.team.project.repository.UserRepository()));
     }
 
     private static HttpStatus statusOf(ResponseStatusException e) {
@@ -113,6 +114,58 @@ class ProjectServiceTest {
     @Test
     void getUnknownProjectIsNotFound() {
         ResponseStatusException e = assertThrows(ResponseStatusException.class, () -> projectService.get(1, 999));
+
+        assertEquals(HttpStatus.NOT_FOUND, statusOf(e));
+    }
+
+    // ---------- members ----------
+
+    @Test
+    void membersAreListedForMembers() {
+        assertEquals(List.of(1, 2), projectService.listMembers(2, 1).stream().map(u -> u.userId()).toList());
+    }
+
+    @Test
+    void membersCannotBeListedByNonMember() {
+        ResponseStatusException e = assertThrows(ResponseStatusException.class, () -> projectService.listMembers(1, 2));
+
+        assertEquals(HttpStatus.FORBIDDEN, statusOf(e));
+    }
+
+    @Test
+    void hostCanAddMember() {
+        // project 2 has host 2 and no user 1
+        var added = projectService.addMember(2, 2, new AddMemberRequest(1));
+
+        assertEquals(1, added.userId());
+        assertEquals(List.of(1, 2), projectService.listMembers(1, 2).stream().map(u -> u.userId()).toList());
+    }
+
+    @Test
+    void nonHostCannotAddMember() {
+        // user 2 is a member of project 1 but the host is user 1
+        ResponseStatusException e = assertThrows(ResponseStatusException.class,
+                () -> projectService.addMember(2, 1, new AddMemberRequest(2)));
+
+        assertEquals(HttpStatus.FORBIDDEN, statusOf(e));
+    }
+
+    @Test
+    void addMemberRejectsUnknownUserDuplicateAndMissingId() {
+        assertEquals(HttpStatus.NOT_FOUND, statusOf(assertThrows(ResponseStatusException.class,
+                () -> projectService.addMember(1, 1, new AddMemberRequest(999)))));
+        assertEquals(HttpStatus.CONFLICT, statusOf(assertThrows(ResponseStatusException.class,
+                () -> projectService.addMember(1, 1, new AddMemberRequest(2)))));
+        assertEquals(HttpStatus.BAD_REQUEST, statusOf(assertThrows(ResponseStatusException.class,
+                () -> projectService.addMember(1, 1, new AddMemberRequest(null)))));
+        assertEquals(HttpStatus.BAD_REQUEST, statusOf(assertThrows(ResponseStatusException.class,
+                () -> projectService.addMember(1, 1, null))));
+    }
+
+    @Test
+    void addMemberToUnknownProjectIsNotFound() {
+        ResponseStatusException e = assertThrows(ResponseStatusException.class,
+                () -> projectService.addMember(1, 999, new AddMemberRequest(2)));
 
         assertEquals(HttpStatus.NOT_FOUND, statusOf(e));
     }

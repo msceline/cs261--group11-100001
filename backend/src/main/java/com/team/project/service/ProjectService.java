@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.team.project.dto.auth.UserResponse;
+import com.team.project.dto.project.AddMemberRequest;
 import com.team.project.dto.project.CreateProjectRequest;
 import com.team.project.dto.project.ProjectResponse;
 import com.team.project.entity.Project;
@@ -15,9 +17,11 @@ import com.team.project.repository.ProjectRepository;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final UserService userService;
 
-    public ProjectService(ProjectRepository projectRepository) {
+    public ProjectService(ProjectRepository projectRepository, UserService userService) {
         this.projectRepository = projectRepository;
+        this.userService = userService;
     }
 
     public ProjectResponse create(int userId, CreateProjectRequest req) {
@@ -37,12 +41,44 @@ public class ProjectService {
 
     /** Members only. */
     public ProjectResponse get(int userId, int projectId) {
-        Project project = projectRepository.findById(projectId)
+        return ProjectResponse.from(findAsMember(userId, projectId));
+    }
+
+    /** Members only. */
+    public List<UserResponse> listMembers(int userId, int projectId) {
+        return findAsMember(userId, projectId).getMemberIds().stream()
+                .flatMap(id -> userService.findById(id).stream())
+                .map(UserResponse::from)
+                .toList();
+    }
+
+    /** Host only. */
+    public UserResponse addMember(int userId, int projectId, AddMemberRequest req) {
+        Project project = find(projectId);
+        if (project.getHostId() != userId) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the host can add members");
+        }
+        if (req == null || req.userId() == null) throw bad("userId is required");
+        UserResponse newMember = userService.findById(req.userId())
+                .map(UserResponse::from)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        if (!project.addMember(req.userId())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already a member");
+        }
+        return newMember;
+    }
+
+    private Project find(int projectId) {
+        return projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found"));
+    }
+
+    private Project findAsMember(int userId, int projectId) {
+        Project project = find(projectId);
         if (!project.isMember(userId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a member of this project");
         }
-        return ProjectResponse.from(project);
+        return project;
     }
 
     private static ResponseStatusException bad(String message) {

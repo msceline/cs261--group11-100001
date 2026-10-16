@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.team.project.dto.auth.UserResponse;
+import com.team.project.dto.project.AddMemberRequest;
 import com.team.project.dto.project.CreateProjectRequest;
 import com.team.project.dto.project.ProjectResponse;
 import com.team.project.service.ProjectService;
@@ -41,5 +43,17 @@ public class ProjectController {
     @GetMapping("/{projectId}")
     public ProjectResponse get(@RequestAttribute("userId") int userId, @PathVariable int projectId) {
         return projectService.get(userId, projectId);
+    }
+
+    @GetMapping("/{projectId}/members")
+    public List<UserResponse> listMembers(@RequestAttribute("userId") int userId, @PathVariable int projectId) {
+        return projectService.listMembers(userId, projectId);
+    }
+
+    @PostMapping("/{projectId}/members")
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserResponse addMember(@RequestAttribute("userId") int userId, @PathVariable int projectId,
+                                  @RequestBody AddMemberRequest request) {
+        return projectService.addMember(userId, projectId, request);
     }
 }

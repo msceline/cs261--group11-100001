@@ -1,6 +1,7 @@
 package com.team.project.entity;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -34,6 +35,8 @@ public class Project {
 
     public void setProgress(BigDecimal progress) { this.progress = progress; }
 
-    public void addMember(int userId) { memberIds.add(userId); }
+    /** Returns false if the user was already a member. */
+    public boolean addMember(int userId) { return memberIds.add(userId); }
+    public List<Integer> getMemberIds() { return memberIds.stream().sorted().toList(); }
     public boolean isMember(int userId) { return memberIds.contains(userId); }
 }
