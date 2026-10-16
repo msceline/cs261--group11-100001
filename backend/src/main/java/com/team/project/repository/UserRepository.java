@@ -13,8 +13,7 @@ import com.team.project.entity.User;
 public class UserRepository {
 
     // password for all mock users is "password123" (SHA-256 hex)
-    private static final String MOCK_PASSWORD_HASH =
-            "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f";
+    private static final String MOCK_PASSWORD_HASH = "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f";
 
     private final List<User> users = List.of(
             new User(1, "6609650001", MOCK_PASSWORD_HASH, "Somchai Jaidee", "somchai@dome.tu.ac.th",

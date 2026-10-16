@@ -1,4 +1,3 @@
-
 package com.team.project.controller;
 
 import java.util.List;
@@ -30,9 +29,9 @@ public class TaskController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getTaskById(@PathVariable int id) {
         return taskService.getTaskById(id)
-            .<ResponseEntity<?>>map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", "Task not found")));
+                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "Task not found")));
     }
 
     @PostMapping
@@ -40,14 +39,13 @@ public class TaskController {
             @RequestBody CreateTaskRequest request) {
 
         Task task = new Task(
-            0,
-            request.getProjectId(),
-            request.getTaskTitle(),
-            request.getTaskDescription(),
-            request.getAssigneeId(),
-            request.getStatus(),
-            request.getDueDate()
-        );
+                0,
+                request.getProjectId(),
+                request.getTaskTitle(),
+                request.getTaskDescription(),
+                request.getAssigneeId(),
+                request.getStatus(),
+                request.getDueDate());
 
         Task createdTask = taskService.createTask(task);
 
@@ -61,18 +59,17 @@ public class TaskController {
             @RequestBody CreateTaskRequest request) {
 
         Task task = new Task(
-            id,
-            request.getProjectId(),
-            request.getTaskTitle(),
-            request.getTaskDescription(),
-            request.getAssigneeId(),
-            request.getStatus(),
-            request.getDueDate()
-        );
+                id,
+                request.getProjectId(),
+                request.getTaskTitle(),
+                request.getTaskDescription(),
+                request.getAssigneeId(),
+                request.getStatus(),
+                request.getDueDate());
 
         return taskService.updateTask(id, task)
-            .<ResponseEntity<?>>map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", "Task not found")));
+                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "Task not found")));
     }
 }

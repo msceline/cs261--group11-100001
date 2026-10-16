@@ -24,8 +24,7 @@ public class TaskRepository {
                 task.getTaskDescription(),
                 task.getAssigneeId(),
                 task.getStatus(),
-                task.getDueDate()
-        );
+                task.getDueDate());
 
         return jpaRepository.save(newTask);
     }

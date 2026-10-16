@@ -1,4 +1,3 @@
-
 package com.team.project.entity;
 
 import java.time.LocalDateTime;
@@ -24,7 +23,6 @@ public class Task {
     private String status;
     private LocalDateTime dueDate;
 
-    // JPA ต้องใช้ constructor ว่าง
     public Task() {
     }
 
@@ -74,7 +72,6 @@ public class Task {
         return dueDate;
     }
 
-    
     public void setProjectId(int projectId) {
         this.projectId = projectId;
     }

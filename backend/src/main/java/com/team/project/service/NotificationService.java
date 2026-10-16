@@ -18,7 +18,6 @@ public class NotificationService {
         this.notificationRepository = notificationRepository;
     }
 
-    // Create a new notification
     public Notification createNotification(
             String title,
             String message,
@@ -38,12 +37,10 @@ public class NotificationService {
         return notificationRepository.save(notification);
     }
 
-    // Get notifications for a user
     public List<Notification> getNotificationsByUserId(int userId) {
         return notificationRepository.findByUserId(userId);
     }
 
-    // Find a notification by ID
     public Optional<Notification> getNotificationById(int id) {
         return notificationRepository.findById(id);
     }

@@ -1,4 +1,3 @@
-
 package com.team.project.dto.notification;
 
 public class CreateNotificationRequest {

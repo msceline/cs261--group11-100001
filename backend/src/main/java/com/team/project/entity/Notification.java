@@ -23,7 +23,6 @@ public class Notification {
     private String type;
     private int userId;
 
-    // Required by JPA
     public Notification() {
     }
 

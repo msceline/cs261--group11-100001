@@ -1,4 +1,3 @@
-
 package com.team.project.dto.task;
 
 import java.time.LocalDateTime;
@@ -12,11 +11,9 @@ public class CreateTaskRequest {
     private String status;
     private LocalDateTime dueDate;
 
-    // Constructor เปล่า ให้ Jackson สร้าง object ได้
     public CreateTaskRequest() {
     }
 
-    // Getters
     public int getProjectId() {
         return projectId;
     }
@@ -41,7 +38,6 @@ public class CreateTaskRequest {
         return dueDate;
     }
 
-    // Setters
     public void setProjectId(int projectId) {
         this.projectId = projectId;
     }

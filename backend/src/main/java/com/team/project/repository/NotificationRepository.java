@@ -16,22 +16,18 @@ public class NotificationRepository {
         this.jpaRepository = jpaRepository;
     }
 
-    // Find notifications by user ID
     public List<Notification> findByUserId(int userId) {
         return jpaRepository.findByUserId(userId);
     }
 
-    // Save a notification
     public Notification save(Notification notification) {
         return jpaRepository.save(notification);
     }
 
-    // Find a notification by ID
     public Optional<Notification> findById(int id) {
         return jpaRepository.findById(id);
     }
 
-    // Get all notifications
     public List<Notification> findAll() {
         return jpaRepository.findAll();
     }

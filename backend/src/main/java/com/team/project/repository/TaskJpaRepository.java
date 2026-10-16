@@ -4,5 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.team.project.entity.Task;
 
 public interface TaskJpaRepository
-        extends JpaRepository<Task, Integer> {
+                extends JpaRepository<Task, Integer> {
 }
