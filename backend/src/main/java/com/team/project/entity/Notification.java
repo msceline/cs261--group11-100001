@@ -1,19 +1,34 @@
-
 package com.team.project.entity;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "notifications")
 public class Notification {
-    private final int id;
-    private final String notificationTitle;
-    private final String notificationMessage;
-    private final boolean isRead;
-    private final LocalDateTime createdAt;
-    private final String type;
-    private final int userId;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private String notificationTitle;
+    private String notificationMessage;
+    private boolean isRead;
+    private LocalDateTime createdAt;
+    private String type;
+    private int userId;
+
+    // Required by JPA
+    public Notification() {
+    }
 
     public Notification(
-            int id,
+            Integer id,
             String notificationTitle,
             String notificationMessage,
             boolean isRead,
@@ -29,7 +44,7 @@ public class Notification {
         this.userId = userId;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -55,5 +70,29 @@ public class Notification {
 
     public int getUserId() {
         return userId;
+    }
+
+    public void setNotificationTitle(String notificationTitle) {
+        this.notificationTitle = notificationTitle;
+    }
+
+    public void setNotificationMessage(String notificationMessage) {
+        this.notificationMessage = notificationMessage;
+    }
+
+    public void setRead(boolean read) {
+        this.isRead = read;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }
