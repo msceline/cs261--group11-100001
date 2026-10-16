@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.team.project.entity.Task;
 import com.team.project.service.TaskService;
+import com.team.project.dto.task.CreateTaskRequest;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -37,9 +38,27 @@ public class TaskController {
     }
 
     // Create a new task
+    
     @PostMapping
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
-        Task createdTask = taskService.createTask(task);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdTask);
+    public ResponseEntity<Task> createTask(
+        @RequestBody CreateTaskRequest request) {
+
+    Task task = new Task(
+        0,
+        request.getProjectId(),
+        request.getTaskTitle(),
+        request.getTaskDescription(),
+        request.getAssigneeId(),
+        request.getStatus(),
+        request.getDueDate(),
+        request.getStartDate()
+    );
+
+    Task createdTask = taskService.createTask(task);
+
+    return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(createdTask);
     }
+
 }
