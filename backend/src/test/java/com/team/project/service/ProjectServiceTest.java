@@ -38,7 +38,7 @@ class ProjectServiceTest {
 
     @Test
     void createMakesCallerTheHostAndMember() {
-        ProjectResponse created = projectService.create(3, new CreateProjectRequest("  My Group ", "desc", "CS300"));
+        ProjectResponse created = projectService.create(3, new CreateProjectRequest("  My Group ", "CS300"));
 
         assertEquals("My Group", created.projectName());
         assertEquals(3, created.hostId());
@@ -48,8 +48,8 @@ class ProjectServiceTest {
 
     @Test
     void createAssignsNewIds() {
-        ProjectResponse a = projectService.create(3, new CreateProjectRequest("A", null, null));
-        ProjectResponse b = projectService.create(3, new CreateProjectRequest("B", null, null));
+        ProjectResponse a = projectService.create(3, new CreateProjectRequest("A", null));
+        ProjectResponse b = projectService.create(3, new CreateProjectRequest("B", null));
 
         assertTrue(a.projectId() != b.projectId());
     }
@@ -57,9 +57,9 @@ class ProjectServiceTest {
     @Test
     void createRejectsBlankOrMissingName() {
         assertEquals(HttpStatus.BAD_REQUEST, statusOf(assertThrows(ResponseStatusException.class,
-                () -> projectService.create(1, new CreateProjectRequest("   ", null, null)))));
+                () -> projectService.create(1, new CreateProjectRequest("   ", null)))));
         assertEquals(HttpStatus.BAD_REQUEST, statusOf(assertThrows(ResponseStatusException.class,
-                () -> projectService.create(1, new CreateProjectRequest(null, null, null)))));
+                () -> projectService.create(1, new CreateProjectRequest(null, null)))));
         assertEquals(HttpStatus.BAD_REQUEST, statusOf(assertThrows(ResponseStatusException.class,
                 () -> projectService.create(1, null))));
     }
@@ -67,17 +67,15 @@ class ProjectServiceTest {
     @Test
     void createRejectsTooLongFields() {
         assertEquals(HttpStatus.BAD_REQUEST, statusOf(assertThrows(ResponseStatusException.class,
-                () -> projectService.create(1, new CreateProjectRequest("x".repeat(151), null, null)))));
+                () -> projectService.create(1, new CreateProjectRequest("x".repeat(151), null)))));
         assertEquals(HttpStatus.BAD_REQUEST, statusOf(assertThrows(ResponseStatusException.class,
-                () -> projectService.create(1, new CreateProjectRequest("ok", "x".repeat(501), null)))));
-        assertEquals(HttpStatus.BAD_REQUEST, statusOf(assertThrows(ResponseStatusException.class,
-                () -> projectService.create(1, new CreateProjectRequest("ok", null, "x".repeat(21))))));
+                () -> projectService.create(1, new CreateProjectRequest("ok", "x".repeat(21))))));
     }
 
     @Test
     void createAcceptsFieldsAtMaxLength() {
         ProjectResponse created = projectService.create(1,
-                new CreateProjectRequest("x".repeat(150), "y".repeat(500), "z".repeat(20)));
+                new CreateProjectRequest("x".repeat(150), "z".repeat(20)));
 
         assertEquals(150, created.projectName().length());
     }

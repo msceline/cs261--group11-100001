@@ -63,7 +63,7 @@ class MemberServiceTest {
 
     @Test
     void creatingAProjectAddsCallerAsHostMember() {
-        int projectId = projectService.create(3, new CreateProjectRequest("New", null, null)).projectId();
+        int projectId = projectService.create(3, new CreateProjectRequest("New", null)).projectId();
 
         List<MemberResponse> members = memberService.list(3, projectId);
 

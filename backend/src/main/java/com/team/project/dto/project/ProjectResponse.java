@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 
 import com.team.project.entity.Project;
 
-public record ProjectResponse(int projectId, String projectName, String projectDescription, String subjectCode,
+public record ProjectResponse(int projectId, String projectName, String subjectCode,
                               int hostId, BigDecimal progress) {
 
     public static ProjectResponse from(Project p) {
-        return new ProjectResponse(p.getProjectId(), p.getProjectName(), p.getProjectDescription(),
+        return new ProjectResponse(p.getProjectId(), p.getProjectName(),
                 p.getSubjectCode(), p.getHostId(), p.getProgress());
     }
 }

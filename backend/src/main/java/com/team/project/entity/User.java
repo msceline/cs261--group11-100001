@@ -6,8 +6,8 @@ public class User {
     private final int userId;
     private final String studentId;
     private final String password;
-    private String displayName;
-    private String email;
+    private final String displayName;
+    private final String email;
     private final LocalDateTime createdAt;
     private final Role role;
 
@@ -30,6 +30,4 @@ public class User {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public Role getRole() { return role; }
 
-    public void setDisplayName(String displayName) { this.displayName = displayName; }
-    public void setEmail(String email) { this.email = email; }
 }

@@ -35,7 +35,7 @@ class ProjectControllerTest {
     }
 
     private static ProjectResponse project(int id, String name, int hostId) {
-        return new ProjectResponse(id, name, "desc", "CS261", hostId, new BigDecimal("12.50"));
+        return new ProjectResponse(id, name, "CS261", hostId, new BigDecimal("12.50"));
     }
 
     @Test
@@ -44,7 +44,7 @@ class ProjectControllerTest {
 
         mockMvc.perform(post("/api/projects").requestAttr("userId", 1)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"projectName\":\"New\",\"projectDescription\":\"desc\",\"subjectCode\":\"CS261\"}"))
+                        .content("{\"projectName\":\"New\",\"subjectCode\":\"CS261\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.projectId").value(3))
                 .andExpect(jsonPath("$.hostId").value(1))

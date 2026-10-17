@@ -33,16 +33,4 @@ public class UserRepository {
     public Optional<User> findById(int userId) {
         return users.stream().filter(u -> u.getUserId() == userId).findFirst();
     }
-
-    /** Replaces the stored user that has the same id. */
-    public User save(User user) {
-        for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getUserId() == user.getUserId()) {
-                users.set(i, user);
-                return user;
-            }
-        }
-        users.add(user);
-        return user;
-    }
 }

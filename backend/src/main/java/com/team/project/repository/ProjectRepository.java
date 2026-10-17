@@ -18,10 +18,8 @@ public class ProjectRepository {
     private final AtomicInteger nextId = new AtomicInteger(1);
 
     public ProjectRepository() {
-        projects.add(new Project(nextId.getAndIncrement(), "Library Management System",
-                "Group project for CS261", "CS261", 1, new BigDecimal("35.50")));
-        projects.add(new Project(nextId.getAndIncrement(), "Mobile App Prototype",
-                "Prototype for the UX course", "CS251", 2, new BigDecimal("0.00")));
+        projects.add(new Project(nextId.getAndIncrement(), "Library Management System", "CS261", 1, new BigDecimal("35.50")));
+        projects.add(new Project(nextId.getAndIncrement(), "Mobile App Prototype", "CS251", 2, new BigDecimal("0.00")));
     }
 
     public Optional<Project> findById(int projectId) {
@@ -29,8 +27,8 @@ public class ProjectRepository {
     }
 
     /** Creates a new project (id assigned here, like an IDENTITY column). */
-    public Project create(String name, String description, String subjectCode, int hostId) {
-        Project project = new Project(nextId.getAndIncrement(), name, description, subjectCode, hostId,
+    public Project create(String name, String subjectCode, int hostId) {
+        Project project = new Project(nextId.getAndIncrement(), name, subjectCode, hostId,
                 new BigDecimal("0.00"));
         projects.add(project);
         return project;
