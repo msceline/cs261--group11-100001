@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,22 +27,26 @@ public class NotificationController {
     }
 
     @GetMapping("/user/{userId}")
-    public List<NotificationResponse> getNotificationsByUserId(@PathVariable int userId) {
-        return notificationService.getNotificationsByUserId(userId).stream()
+    public List<NotificationResponse> getNotificationsByUserId(@RequestAttribute("userId") int callerId,
+                                                               @PathVariable int userId) {
+        return notificationService.getNotificationsByUserId(callerId, userId).stream()
                 .map(NotificationResponse::from)
                 .toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<NotificationResponse> getNotificationById(@PathVariable int id) {
-        return notificationService.getNotificationById(id)
+    public ResponseEntity<NotificationResponse> getNotificationById(@RequestAttribute("userId") int callerId,
+                                                                    @PathVariable int id) {
+        return notificationService.getNotificationById(callerId, id)
                 .map(n -> ResponseEntity.ok(NotificationResponse.from(n)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<NotificationResponse> createNotification(@RequestBody CreateNotificationRequest request) {
+    public ResponseEntity<NotificationResponse> createNotification(@RequestAttribute("userId") int callerId,
+                                                                   @RequestBody CreateNotificationRequest request) {
         var notification = notificationService.createNotification(
+                callerId,
                 request.getNotificationTitle(),
                 request.getNotificationMessage(),
                 request.getType(),
