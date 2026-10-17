@@ -2,13 +2,9 @@ package com.team.project.repository;
 
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
 import com.team.project.entity.ProjectMember;
 
-@Repository
 public interface ProjectMemberRepository extends JpaRepository<ProjectMember, Integer> {
 
     List<ProjectMember> findByProject_ProjectId(Integer projectId);
@@ -19,4 +15,3 @@ public interface ProjectMemberRepository extends JpaRepository<ProjectMember, In
 
     boolean existsByProject_ProjectIdAndUser_UserId(Integer projectId, Integer userId);
 }
-

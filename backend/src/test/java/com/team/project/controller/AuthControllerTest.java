@@ -17,7 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.team.project.entity.Role;
 import com.team.project.dto.auth.LoginResponse;
 import com.team.project.dto.auth.UserResponse;
 import com.team.project.service.AuthService;
@@ -34,7 +33,7 @@ class AuthControllerTest {
     }
 
     private static UserResponse user() {
-        return new UserResponse(1, "6609650001", "Somchai", "s@x.com", LocalDateTime.of(2026, 1, 1, 0, 0), Role.STUDENT);
+        return new UserResponse(1, "6609650001", "Somchai", "s@x.com", LocalDateTime.of(2026, 1, 1, 0, 0), "student");
     }
 
     @Test

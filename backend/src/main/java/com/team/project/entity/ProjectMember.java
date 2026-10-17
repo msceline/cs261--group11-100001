@@ -21,6 +21,10 @@ import jakarta.persistence.UniqueConstraint;
 )
 public class ProjectMember {
 
+    public static final String HOST = "host";
+    public static final String MEMBER = "member";
+    public static final String VISITOR = "visitor";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -75,6 +79,14 @@ public class ProjectMember {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Integer getUserId() {
+        return user.getUserId();
+    }
+
+    public Integer getProjectId() {
+        return project.getProjectId();
     }
 
     public Project getProject() {

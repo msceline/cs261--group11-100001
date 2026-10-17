@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.team.project.entity.Role;
 import com.team.project.entity.User;
 import com.team.project.service.UserService;
 
@@ -30,7 +29,7 @@ class UserControllerTest {
     }
 
     private static User user(int id, String name, String email) {
-        return new User(id, "660965000" + id, "hash", name, email, LocalDateTime.of(2026, 1, 1, 0, 0), Role.STUDENT);
+        return new User(id, "660965000" + id, "student", name, email, "hash", LocalDateTime.of(2026, 1, 1, 0, 0));
     }
 
     @Test

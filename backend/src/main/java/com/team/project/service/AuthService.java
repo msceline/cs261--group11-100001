@@ -28,7 +28,7 @@ public class AuthService {
     public Optional<LoginResponse> login(LoginRequest req) {
         if (req == null || req.studentId() == null || req.password() == null) return Optional.empty();
         return userService.findByStudentId(req.studentId())
-                .filter(u -> u.getPassword().equals(sha256(req.password())))
+                .filter(u -> u.getPassword() != null && u.getPassword().equals(sha256(req.password())))
                 .map(u -> new LoginResponse(jwtService.generateToken(u.getUserId()), UserResponse.from(u)));
     }
 

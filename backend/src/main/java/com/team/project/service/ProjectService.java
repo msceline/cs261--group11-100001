@@ -10,34 +10,41 @@ import com.team.project.dto.project.CreateProjectRequest;
 import com.team.project.dto.project.ProjectResponse;
 import com.team.project.entity.Project;
 import com.team.project.entity.ProjectMember;
-import com.team.project.repository.MemberRepository;
+import com.team.project.entity.User;
+import com.team.project.repository.ProjectMemberRepository;
 import com.team.project.repository.ProjectRepository;
+import com.team.project.repository.UserRepository;
 
 @Service
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
-    private final MemberRepository memberRepository;
+    private final ProjectMemberRepository memberRepository;
 
-    public ProjectService(ProjectRepository projectRepository, MemberRepository memberRepository) {
+    private final UserRepository userRepository;
+
+    public ProjectService(ProjectRepository projectRepository, ProjectMemberRepository memberRepository,
+                          UserRepository userRepository) {
         this.projectRepository = projectRepository;
         this.memberRepository = memberRepository;
+        this.userRepository = userRepository;
     }
 
     /** The caller becomes the host and is added as a member with role "host". */
     public ProjectResponse create(int userId, CreateProjectRequest req) {
         if (req == null) throw bad("Request body is required");
         String name = req.projectName() == null ? "" : req.projectName().trim();
-        if (name.isEmpty() || name.length() > 150) throw bad("projectName must be 1-150 characters");
-        String subject = req.subjectCode() == null ? null : req.subjectCode().trim();
-        if (subject != null && subject.length() > 20) throw bad("subjectCode must be at most 20 characters");
-        Project project = projectRepository.create(name, subject, userId);
-        memberRepository.create(project.getProjectId(), userId, ProjectMember.HOST);
+        if (name.isEmpty() || name.length() > 100) throw bad("projectName must be 1-100 characters");
+        String subject = req.subjectCode() == null ? "" : req.subjectCode().trim();
+        if (subject.isEmpty() || subject.length() > 20) throw bad("subjectCode must be 1-20 characters");
+        User host = userRepository.getReferenceById(userId);
+        Project project = projectRepository.save(new Project(null, name, subject, host, 0, null, null));
+        memberRepository.save(new ProjectMember(null, host, project, ProjectMember.HOST, null));
         return ProjectResponse.from(project);
     }
 
     public List<ProjectResponse> listForMember(int userId) {
-        return memberRepository.findByUserId(userId).stream()
+        return memberRepository.findByUser_UserId(userId).stream()
                 .map(m -> projectRepository.findById(m.getProjectId()))
                 .flatMap(java.util.Optional::stream)
                 .map(ProjectResponse::from)
@@ -48,7 +55,7 @@ public class ProjectService {
     public ProjectResponse get(int userId, int projectId) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found"));
-        if (!memberRepository.existsByProjectIdAndUserId(projectId, userId)) {
+        if (!memberRepository.existsByProject_ProjectIdAndUser_UserId(projectId, userId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a member of this project");
         }
         return ProjectResponse.from(project);
