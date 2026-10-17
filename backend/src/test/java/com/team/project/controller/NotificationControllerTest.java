@@ -13,9 +13,11 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.team.project.entity.Notification;
 import com.team.project.entity.User;
@@ -40,10 +42,10 @@ class NotificationControllerTest {
 
     @Test
     void getByUserReturnsNotificationResponses() throws Exception {
-        when(notificationService.getNotificationsByUserId(2))
+        when(notificationService.getNotificationsByUserId(2, 2))
                 .thenReturn(List.of(notification(2, "New", false), notification(1, "Old", true)));
 
-        mockMvc.perform(get("/api/notifications/user/2"))
+        mockMvc.perform(get("/api/notifications/user/2").requestAttr("userId", 2))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].id").value(2))
@@ -54,10 +56,19 @@ class NotificationControllerTest {
     }
 
     @Test
-    void getByIdReturnsNotification() throws Exception {
-        when(notificationService.getNotificationById(1)).thenReturn(Optional.of(notification(1, "Old", true)));
+    void getByUserReturns403ForAnotherUsersNotifications() throws Exception {
+        when(notificationService.getNotificationsByUserId(2, 5))
+                .thenThrow(new ResponseStatusException(HttpStatus.FORBIDDEN));
 
-        mockMvc.perform(get("/api/notifications/1"))
+        mockMvc.perform(get("/api/notifications/user/5").requestAttr("userId", 2))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void getByIdReturnsNotification() throws Exception {
+        when(notificationService.getNotificationById(2, 1)).thenReturn(Optional.of(notification(1, "Old", true)));
+
+        mockMvc.perform(get("/api/notifications/1").requestAttr("userId", 2))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.type").value("invite"));
@@ -65,17 +76,17 @@ class NotificationControllerTest {
 
     @Test
     void getByIdUnknownReturns404() throws Exception {
-        when(notificationService.getNotificationById(999)).thenReturn(Optional.empty());
+        when(notificationService.getNotificationById(2, 999)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/notifications/999")).andExpect(status().isNotFound());
+        mockMvc.perform(get("/api/notifications/999").requestAttr("userId", 2)).andExpect(status().isNotFound());
     }
 
     @Test
     void createReturns201WithNotification() throws Exception {
-        when(notificationService.createNotification("Title", "message", "invite", 2))
+        when(notificationService.createNotification(2, "Title", "message", "invite", 2))
                 .thenReturn(notification(5, "Title", false));
 
-        mockMvc.perform(post("/api/notifications").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/api/notifications").requestAttr("userId", 2).contentType(MediaType.APPLICATION_JSON)
                         .content("{\"notificationTitle\":\"Title\",\"notificationMessage\":\"message\","
                                 + "\"type\":\"invite\",\"userId\":2}"))
                 .andExpect(status().isCreated())

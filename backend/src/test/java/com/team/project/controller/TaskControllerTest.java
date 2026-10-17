@@ -55,9 +55,9 @@ class TaskControllerTest {
 
     @Test
     void getAllReturnsTaskResponses() throws Exception {
-        when(taskService.getAllTasks()).thenReturn(List.of(task(1, "A"), task(2, "B")));
+        when(taskService.listForMember(1)).thenReturn(List.of(task(1, "A"), task(2, "B")));
 
-        mockMvc.perform(get("/api/tasks"))
+        mockMvc.perform(get("/api/tasks").requestAttr("userId", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].taskId").value(1))
@@ -69,9 +69,9 @@ class TaskControllerTest {
 
     @Test
     void getByIdReturnsTask() throws Exception {
-        when(taskService.getTaskById(1)).thenReturn(Optional.of(task(1, "A")));
+        when(taskService.getTaskById(1, 1)).thenReturn(Optional.of(task(1, "A")));
 
-        mockMvc.perform(get("/api/tasks/1"))
+        mockMvc.perform(get("/api/tasks/1").requestAttr("userId", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.taskId").value(1))
                 .andExpect(jsonPath("$.status").value("doing"))
@@ -79,25 +79,32 @@ class TaskControllerTest {
     }
 
     @Test
-    void getByIdUnknownReturns404() throws Exception {
-        when(taskService.getTaskById(999)).thenReturn(Optional.empty());
+    void getByIdReturns403ForNonMember() throws Exception {
+        when(taskService.getTaskById(1, 4)).thenThrow(new ResponseStatusException(HttpStatus.FORBIDDEN));
 
-        mockMvc.perform(get("/api/tasks/999"))
+        mockMvc.perform(get("/api/tasks/4").requestAttr("userId", 1)).andExpect(status().isForbidden());
+    }
+
+    @Test
+    void getByIdUnknownReturns404() throws Exception {
+        when(taskService.getTaskById(1, 999)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/tasks/999").requestAttr("userId", 1))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("Task not found"));
     }
 
     @Test
     void createReturns201AndPassesRequestToService() throws Exception {
-        when(taskService.createTask(any())).thenReturn(task(7, "Report"));
+        when(taskService.createTask(eq(1), any())).thenReturn(task(7, "Report"));
 
-        mockMvc.perform(post("/api/tasks").contentType(MediaType.APPLICATION_JSON).content(BODY))
+        mockMvc.perform(post("/api/tasks").requestAttr("userId", 1).contentType(MediaType.APPLICATION_JSON).content(BODY))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.taskId").value(7))
                 .andExpect(jsonPath("$.taskTitle").value("Report"));
 
         ArgumentCaptor<CreateTaskRequest> request = ArgumentCaptor.forClass(CreateTaskRequest.class);
-        verify(taskService).createTask(request.capture());
+        verify(taskService).createTask(eq(1), request.capture());
         org.junit.jupiter.api.Assertions.assertEquals(
                 new CreateTaskRequest(1, "Report", "d", 2, "doing", LocalDateTime.of(2026, 12, 1, 10, 0)),
                 request.getValue());
@@ -105,27 +112,27 @@ class TaskControllerTest {
 
     @Test
     void createWithInvalidDataReturns400() throws Exception {
-        when(taskService.createTask(any()))
+        when(taskService.createTask(eq(1), any()))
                 .thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "taskTitle must be 1-200 characters"));
 
-        mockMvc.perform(post("/api/tasks").contentType(MediaType.APPLICATION_JSON).content("{\"projectId\":1}"))
+        mockMvc.perform(post("/api/tasks").requestAttr("userId", 1).contentType(MediaType.APPLICATION_JSON).content("{\"projectId\":1}"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void updateReturnsUpdatedTask() throws Exception {
-        when(taskService.updateTask(eq(3), any())).thenReturn(Optional.of(task(3, "Report")));
+        when(taskService.updateTask(eq(1), eq(3), any())).thenReturn(Optional.of(task(3, "Report")));
 
-        mockMvc.perform(put("/api/tasks/3").contentType(MediaType.APPLICATION_JSON).content(BODY))
+        mockMvc.perform(put("/api/tasks/3").requestAttr("userId", 1).contentType(MediaType.APPLICATION_JSON).content(BODY))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.taskId").value(3));
     }
 
     @Test
     void updateUnknownReturns404() throws Exception {
-        when(taskService.updateTask(eq(999), any())).thenReturn(Optional.empty());
+        when(taskService.updateTask(eq(1), eq(999), any())).thenReturn(Optional.empty());
 
-        mockMvc.perform(put("/api/tasks/999").contentType(MediaType.APPLICATION_JSON).content(BODY))
+        mockMvc.perform(put("/api/tasks/999").requestAttr("userId", 1).contentType(MediaType.APPLICATION_JSON).content(BODY))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("Task not found"));
     }

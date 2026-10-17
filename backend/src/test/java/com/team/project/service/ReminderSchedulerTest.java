@@ -59,7 +59,7 @@ class ReminderSchedulerTest {
     void sendsTenMinuteReminderToAssignee() {
         runWith(task(1, assignee, "todo", tenMinuteReminderDue()));
 
-        verify(notificationService).createNotification(
+        verify(notificationService).createSystemNotification(
                 eq("Task deadline in 10 minutes"), contains("Report"), eq("TASK_REMINDER"), eq(2));
     }
 
@@ -70,34 +70,34 @@ class ReminderSchedulerTest {
         scheduler.checkReminders();
         scheduler.checkReminders();
 
-        verify(notificationService, times(1)).createNotification(anyString(), anyString(), anyString(), anyInt());
+        verify(notificationService, times(1)).createSystemNotification(anyString(), anyString(), anyString(), anyInt());
     }
 
     @Test
     void skipsDoneTasks() {
         runWith(task(1, assignee, "done", tenMinuteReminderDue()));
 
-        verify(notificationService, never()).createNotification(any(), any(), any(), anyInt());
+        verify(notificationService, never()).createSystemNotification(any(), any(), any(), anyInt());
     }
 
     @Test
     void skipsTasksWithoutAssigneeOrDueDate() {
         runWith(task(1, null, "todo", tenMinuteReminderDue()), task(2, assignee, "todo", null));
 
-        verify(notificationService, never()).createNotification(any(), any(), any(), anyInt());
+        verify(notificationService, never()).createSystemNotification(any(), any(), any(), anyInt());
     }
 
     @Test
     void skipsOverdueTasks() {
         runWith(task(1, assignee, "todo", LocalDateTime.now(ZONE).minusHours(1)));
 
-        verify(notificationService, never()).createNotification(any(), any(), any(), anyInt());
+        verify(notificationService, never()).createSystemNotification(any(), any(), any(), anyInt());
     }
 
     @Test
     void skipsTasksDueFarInTheFuture() {
         runWith(task(1, assignee, "todo", LocalDateTime.now(ZONE).plusDays(7).withHour(18)));
 
-        verify(notificationService, never()).createNotification(any(), any(), any(), anyInt());
+        verify(notificationService, never()).createSystemNotification(any(), any(), any(), anyInt());
     }
 }
