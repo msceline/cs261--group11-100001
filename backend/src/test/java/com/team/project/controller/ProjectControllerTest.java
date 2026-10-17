@@ -9,7 +9,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +34,7 @@ class ProjectControllerTest {
     }
 
     private static ProjectResponse project(int id, String name, int hostId) {
-        return new ProjectResponse(id, name, "CS261", hostId, new BigDecimal("12.50"));
+        return new ProjectResponse(id, name, "CS261", hostId, 12);
     }
 
     @Test
@@ -48,13 +47,13 @@ class ProjectControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.projectId").value(3))
                 .andExpect(jsonPath("$.hostId").value(1))
-                .andExpect(jsonPath("$.progress").value(12.5));
+                .andExpect(jsonPath("$.progress").value(12));
     }
 
     @Test
     void createWithInvalidDataReturns400() throws Exception {
         when(projectService.create(eq(1), any()))
-                .thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "projectName must be 1-150 characters"));
+                .thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "projectName must be 1-100 characters"));
 
         mockMvc.perform(post("/api/projects").requestAttr("userId", 1)
                         .contentType(MediaType.APPLICATION_JSON)
