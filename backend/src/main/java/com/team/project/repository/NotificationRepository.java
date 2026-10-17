@@ -1,34 +1,15 @@
 package com.team.project.repository;
 
 import java.util.List;
-import java.util.Optional;
-
-import org.springframework.stereotype.Repository;
-
+import org.springframework.data.jpa.repository.JpaRepository;
 import com.team.project.entity.Notification;
 
-@Repository
-public class NotificationRepository {
+public interface NotificationRepository extends JpaRepository<Notification, Integer> {
 
-    private final NotificationJpaRepository jpaRepository;
+    List<Notification> findByUser_UserIdOrderByCreatedAtDesc(Integer userId);
 
-    public NotificationRepository(NotificationJpaRepository jpaRepository) {
-        this.jpaRepository = jpaRepository;
-    }
+    List<Notification> findByUser_UserIdAndIsReadFalseOrderByCreatedAtDesc(Integer userId);
 
-    public List<Notification> findByUserId(int userId) {
-        return jpaRepository.findByUserId(userId);
-    }
-
-    public Notification save(Notification notification) {
-        return jpaRepository.save(notification);
-    }
-
-    public Optional<Notification> findById(int id) {
-        return jpaRepository.findById(id);
-    }
-
-    public List<Notification> findAll() {
-        return jpaRepository.findAll();
-    }
+    long countByUser_UserIdAndIsReadFalse(Integer userId);
 }
+
