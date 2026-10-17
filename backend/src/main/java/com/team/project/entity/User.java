@@ -50,6 +50,7 @@ public class User {
         this.email = email;
         this.password = password;
         this.createdAt = createdAt;
+        this.role = role;
     }
 
     /** Backward-compatible constructor for existing mock data. */

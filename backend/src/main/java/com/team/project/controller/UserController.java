@@ -5,37 +5,27 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.team.project.dto.auth.LoginRequest;
-import com.team.project.service.AuthService;
+import com.team.project.dto.auth.UserResponse;
+import com.team.project.service.UserService;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/users")
 public class UserController {
 
-    private final AuthService authService;
+    private final UserService userService;
 
-    public UserController(AuthService authService) {
-        this.authService = authService;
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        return authService.login(request)
-                .<ResponseEntity<?>>map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(Map.of("error", "Invalid student ID or password")));
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> me(@RequestAttribute("userId") int userId) {
-        return authService.me(userId)
-                .<ResponseEntity<?>>map(ResponseEntity::ok)
+    public ResponseEntity<?> getMe(@RequestAttribute("userId") int userId) {
+        return userService.findById(userId)
+                .<ResponseEntity<?>>map(u -> ResponseEntity.ok(UserResponse.from(u)))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.of("error", "User not found")));
     }
