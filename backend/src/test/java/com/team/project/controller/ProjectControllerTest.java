@@ -10,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,8 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.team.project.entity.Role;
-import com.team.project.dto.auth.UserResponse;
 import com.team.project.dto.project.ProjectResponse;
 import com.team.project.service.ProjectService;
 
@@ -113,45 +110,5 @@ class ProjectControllerTest {
     void getWithNonNumericIdReturns400() throws Exception {
         mockMvc.perform(get("/api/projects/abc").requestAttr("userId", 1))
                 .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void listMembersReturnsUsers() throws Exception {
-        when(projectService.listMembers(1, 1)).thenReturn(List.of(
-                new UserResponse(1, "6609650001", "A", "a@x.com", LocalDateTime.of(2026, 1, 1, 0, 0), Role.STUDENT)));
-
-        mockMvc.perform(get("/api/projects/1/members").requestAttr("userId", 1))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].studentId").value("6609650001"));
-    }
-
-    @Test
-    void listMembersReturns403ForNonMember() throws Exception {
-        when(projectService.listMembers(1, 2)).thenThrow(new ResponseStatusException(HttpStatus.FORBIDDEN));
-
-        mockMvc.perform(get("/api/projects/2/members").requestAttr("userId", 1))
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
-    void addMemberReturns201ForHost() throws Exception {
-        when(projectService.addMember(eq(1), eq(1), any())).thenReturn(
-                new UserResponse(2, "6609650002", "B", "b@x.com", LocalDateTime.of(2026, 1, 1, 0, 0), Role.STUDENT));
-
-        mockMvc.perform(post("/api/projects/1/members").requestAttr("userId", 1)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"userId\":2}"))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.userId").value(2));
-    }
-
-    @Test
-    void addMemberReturns403ForNonHost() throws Exception {
-        when(projectService.addMember(eq(2), eq(1), any())).thenThrow(new ResponseStatusException(HttpStatus.FORBIDDEN));
-
-        mockMvc.perform(post("/api/projects/1/members").requestAttr("userId", 2)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"userId\":3}"))
-                .andExpect(status().isForbidden());
     }
 }

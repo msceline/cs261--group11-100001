@@ -18,20 +18,14 @@ public class ProjectRepository {
     private final AtomicInteger nextId = new AtomicInteger(1);
 
     public ProjectRepository() {
-        Project p1 = new Project(nextId.getAndIncrement(), "Library Management System",
-                "Group project for CS261", "CS261", 1, new BigDecimal("35.50"));
-        p1.addMember(2);
-        projects.add(p1);
+        projects.add(new Project(nextId.getAndIncrement(), "Library Management System",
+                "Group project for CS261", "CS261", 1, new BigDecimal("35.50")));
         projects.add(new Project(nextId.getAndIncrement(), "Mobile App Prototype",
                 "Prototype for the UX course", "CS251", 2, new BigDecimal("0.00")));
     }
 
     public Optional<Project> findById(int projectId) {
         return projects.stream().filter(p -> p.getProjectId() == projectId).findFirst();
-    }
-
-    public List<Project> findByMemberId(int userId) {
-        return projects.stream().filter(p -> p.isMember(userId)).toList();
     }
 
     /** Creates a new project (id assigned here, like an IDENTITY column). */
