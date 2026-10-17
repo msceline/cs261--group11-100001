@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import com.team.project.dto.auth.LoginRequest;
 import com.team.project.dto.auth.LoginResponse;
 import com.team.project.dto.auth.UserResponse;
+import com.team.project.entity.Role;
 import com.team.project.repository.UserRepository;
 import com.team.project.security.JwtService;
 
@@ -71,5 +72,11 @@ class AuthServiceTest {
     @Test
     void meReturnsEmptyForUnknownUser() {
         assertTrue(authService.me(999).isEmpty());
+    }
+
+    @Test
+    void loginResponseIncludesRole() {
+        assertEquals(Role.STUDENT, authService.login(new LoginRequest("6609650001", "password123")).orElseThrow().user().role());
+        assertEquals(Role.VISITOR, authService.login(new LoginRequest("9900000001", "password123")).orElseThrow().user().role());
     }
 }

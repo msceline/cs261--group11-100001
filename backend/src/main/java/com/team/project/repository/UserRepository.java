@@ -7,6 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.springframework.stereotype.Repository;
 
+import com.team.project.entity.Role;
 import com.team.project.entity.User;
 
 /** Mock repository backed by in-memory data (not connected to SQL yet). */
@@ -19,9 +20,11 @@ public class UserRepository {
 
     private final List<User> users = new CopyOnWriteArrayList<>(List.of(
             new User(1, "6609650001", MOCK_PASSWORD_HASH, "Somchai Jaidee", "somchai@dome.tu.ac.th",
-                    LocalDateTime.of(2026, 1, 10, 9, 0)),
+                    LocalDateTime.of(2026, 1, 10, 9, 0), Role.STUDENT),
             new User(2, "6609650002", MOCK_PASSWORD_HASH, "Somying Rakdee", "somying@dome.tu.ac.th",
-                    LocalDateTime.of(2026, 1, 11, 10, 30))));
+                    LocalDateTime.of(2026, 1, 11, 10, 30), Role.STUDENT),
+            new User(3, "9900000001", MOCK_PASSWORD_HASH, "Visitor Guest", "visitor@example.com",
+                    LocalDateTime.of(2026, 1, 12, 8, 0), Role.VISITOR)));
 
     public Optional<User> findByStudentId(String studentId) {
         return users.stream().filter(u -> u.getStudentId().equals(studentId)).findFirst();

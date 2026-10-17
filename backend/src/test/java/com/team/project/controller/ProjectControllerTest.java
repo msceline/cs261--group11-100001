@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.team.project.entity.Role;
 import com.team.project.dto.auth.UserResponse;
 import com.team.project.dto.project.ProjectResponse;
 import com.team.project.service.ProjectService;
@@ -117,7 +118,7 @@ class ProjectControllerTest {
     @Test
     void listMembersReturnsUsers() throws Exception {
         when(projectService.listMembers(1, 1)).thenReturn(List.of(
-                new UserResponse(1, "6609650001", "A", "a@x.com", LocalDateTime.of(2026, 1, 1, 0, 0))));
+                new UserResponse(1, "6609650001", "A", "a@x.com", LocalDateTime.of(2026, 1, 1, 0, 0), Role.STUDENT)));
 
         mockMvc.perform(get("/api/projects/1/members").requestAttr("userId", 1))
                 .andExpect(status().isOk())
@@ -135,7 +136,7 @@ class ProjectControllerTest {
     @Test
     void addMemberReturns201ForHost() throws Exception {
         when(projectService.addMember(eq(1), eq(1), any())).thenReturn(
-                new UserResponse(2, "6609650002", "B", "b@x.com", LocalDateTime.of(2026, 1, 1, 0, 0)));
+                new UserResponse(2, "6609650002", "B", "b@x.com", LocalDateTime.of(2026, 1, 1, 0, 0), Role.STUDENT));
 
         mockMvc.perform(post("/api/projects/1/members").requestAttr("userId", 1)
                         .contentType(MediaType.APPLICATION_JSON)
